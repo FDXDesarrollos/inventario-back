@@ -71,7 +71,7 @@ public class CategoriaServiceImp implements ICategoriaService {
 	
 	@Override
 	@Transactional
-	public ResponseEntity<CategoriaResponseRest> guarda(Categoria categoria) {
+	public ResponseEntity<CategoriaResponseRest> guardar(Categoria categoria) {
 		CategoriaResponseRest response = new CategoriaResponseRest();
 		List<Categoria> lista = new ArrayList<>(); 
 		
@@ -81,7 +81,7 @@ public class CategoriaServiceImp implements ICategoriaService {
 			if (categoriaGuarda != null) {
 				lista.add(categoriaGuarda);
 				response.getCategoriaResponse().setCategoria(lista);
-				response.setMetadata("Respuesta OK", "00", "Información registrada");
+				response.setMetadata("Respuesta OK", "00", "Categoria registrada");
 			}
 			else {
 				response.setMetadata("Respuesta BAD", "-1", "Categoria no registrada");
@@ -95,6 +95,72 @@ public class CategoriaServiceImp implements ICategoriaService {
 		}
 		
 		return new ResponseEntity<CategoriaResponseRest>(response, HttpStatus.OK);		
+	}
+
+	@Override
+	@Transactional
+	public ResponseEntity<CategoriaResponseRest> editar(Categoria categoria, Integer id) {
+		CategoriaResponseRest response = new CategoriaResponseRest();
+		List<Categoria> lista = new ArrayList<>(); 
+		
+		try {
+			Optional<Categoria> categoriAux = categoriaDao.findById(id);
+			
+			if(categoriAux.isPresent()) {
+				categoriAux.get().setNombre( categoria.getNombre() );
+				categoriAux.get().setDescripcion( categoria.getDescripcion() );
+				
+				Categoria update = categoriaDao.save(categoriAux.get());
+				
+				if(update != null) {
+					lista.add(update);
+					response.getCategoriaResponse().setCategoria(lista);
+					response.setMetadata("Respuesta OK", "00", "Categoria actualizada");					
+				}
+				else {
+					response.setMetadata("Respuesta BAD", "-1", "Categoria no actualizada");
+					return new ResponseEntity<CategoriaResponseRest>(response, HttpStatus.BAD_REQUEST);					
+				}
+				
+			}
+			else {
+				response.setMetadata("Respuesta BAD", "-1", "Categoria no encontrada");
+				return new ResponseEntity<CategoriaResponseRest>(response, HttpStatus.NOT_FOUND);				
+			}
+		}
+		catch(Exception e) {
+			response.setMetadata("Respuesta BAD", "-1", "Error al actualizar categoria");
+			e.printStackTrace();
+			return new ResponseEntity<CategoriaResponseRest>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
+		return new ResponseEntity<CategoriaResponseRest>(response, HttpStatus.OK);	
+	}
+
+	@Override
+	@Transactional
+	public ResponseEntity<CategoriaResponseRest> eliminar(Integer id) {
+		CategoriaResponseRest response = new CategoriaResponseRest();
+		
+		try {
+			Optional<Categoria> categoria = categoriaDao.findById(id);
+			
+			if(categoria.isPresent()) {
+				categoriaDao.deleteById(id);
+				response.setMetadata("Respuesta OK", "00", "Categoria eliminada");
+			}
+			else {
+				response.setMetadata("Respuesta BAD", "-1", "Categoria no encontrada");
+				return new ResponseEntity<CategoriaResponseRest>(response, HttpStatus.NOT_FOUND);				
+			}
+		}
+		catch(Exception e) {
+			response.setMetadata("Respuesta BAD", "-1", "Error al eliminar");
+			e.printStackTrace();
+			return new ResponseEntity<CategoriaResponseRest>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
+		return new ResponseEntity<CategoriaResponseRest>(response, HttpStatus.OK);
 	}	
 
 }

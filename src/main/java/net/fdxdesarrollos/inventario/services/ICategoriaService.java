@@ -11,6 +11,10 @@ public interface ICategoriaService {
 	
 	public ResponseEntity<CategoriaResponseRest> buscaPorId(Integer id);
 	
-	public ResponseEntity<CategoriaResponseRest> guarda(Categoria categoria);
+	public ResponseEntity<CategoriaResponseRest> guardar(Categoria categoria);
+	
+	public ResponseEntity<CategoriaResponseRest> editar(Categoria categoria, Integer id);
+	
+	public ResponseEntity<CategoriaResponseRest> eliminar(Integer id);
 	
 }
