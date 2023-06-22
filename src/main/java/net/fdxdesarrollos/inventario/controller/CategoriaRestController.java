@@ -17,9 +17,9 @@ import net.fdxdesarrollos.inventario.response.CategoriaResponseRest;
 import net.fdxdesarrollos.inventario.services.ICategoriaService;
 
 
-@CrossOrigin(origins = {"http://localhost:4200/inventario-frontend/"})
 @RestController
-@RequestMapping("/api/v1")
+@CrossOrigin(origins = {"http://localhost:4200"})
+@RequestMapping(path = "/api")
 public class CategoriaRestController {
 	
 	@Autowired
