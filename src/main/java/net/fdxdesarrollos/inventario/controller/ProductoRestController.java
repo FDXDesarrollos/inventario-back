@@ -2,6 +2,8 @@ package net.fdxdesarrollos.inventario.controller;
 
 import java.io.IOException;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,6 +19,8 @@ import org.springframework.web.multipart.MultipartFile;
 import net.fdxdesarrollos.inventario.model.Producto;
 import net.fdxdesarrollos.inventario.response.ProductoResponseRest;
 import net.fdxdesarrollos.inventario.services.IProductoService;
+import net.fdxdesarrollos.inventario.utils.CategoriaExcel;
+import net.fdxdesarrollos.inventario.utils.ProductoExcel;
 import net.fdxdesarrollos.inventario.utils.Util;
 
 @RestController
@@ -90,7 +94,21 @@ public class ProductoRestController {
 	public ResponseEntity<ProductoResponseRest> eliminar(@PathVariable Integer id){
 		ResponseEntity<ProductoResponseRest> reponse = productoService.eliminar(id);
 		return reponse;
-	}		
+	}
+	
+	@GetMapping("/productos/export/excel")
+	public void exportToExcel(HttpServletResponse response) throws IOException{
+		String headerKey = "Content-Disposition";
+		String headerValue = "attachment; filename=productos.xlsx";
+		
+		response.setContentType("application/octet-stream");
+		response.setHeader(headerKey, headerValue);
+		
+		ResponseEntity<ProductoResponseRest> productos = productoService.listar();
+		
+		ProductoExcel excel = new ProductoExcel(productos.getBody().getProductoResponse().getProducto());
+		excel.export(response);
+	}	
 	
 
 
